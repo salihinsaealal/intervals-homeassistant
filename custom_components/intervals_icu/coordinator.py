@@ -53,7 +53,7 @@ class IntervalsDataUpdateCoordinator(DataUpdateCoordinator):
             tasks = [
                 self._make_api_request(f"wellness/{today}"),
                 self._make_api_request(ENDPOINT_EVENTS),
-                self._make_api_request(f"{ENDPOINT_ACTIVITIES}?limit=1"),
+                self._make_api_request(f"{ENDPOINT_ACTIVITIES}?oldest=2000-01-01&limit=1"),
             ]
 
             wellness_data, events_data, activities_data = await asyncio.gather(*tasks)
