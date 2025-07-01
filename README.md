@@ -4,103 +4,114 @@
 
 Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data directly into [Home Assistant](https://www.home-assistant.io/).
 
+---
+
 ## Features
 
-*   Basic authentication with your Intervals.icu API Key.
-*   A sensor for your wellness data.
-*   A sensor for your most recent activity.
-*   Data updates every 15 minutes.
+- Secure Basic Auth with your Intervals.icu API Key
+- **Wellness Sensor**: All your latest wellness metrics
+- **Events Sensor**: See your upcoming or past events
+- Data updates every 15 minutes
+- Easy setup via Home Assistant UI
+- HACS-ready for seamless updates
+
+---
 
 ## Installation
 
 ### HACS (Recommended)
-
-1.  Open HACS in your Home Assistant instance
-2.  Go to the three dots menu (⋮) in the top right corner
-3.  Select "Custom repositories"
-4.  Add this repository URL: `https://github.com/salihinsaealal/intervals-homeassistant`
-5.  Select category: "Integration"
-6.  Click "Add"
-7.  Search for "Intervals.icu" in HACS > Integrations
-8.  Click "Download"
-9.  Restart Home Assistant
+1. Open HACS in Home Assistant
+2. Go to the three dots menu (⋮) in the top right
+3. Select **Custom repositories**
+4. Add this repo URL: `https://github.com/salihinsaealal/intervals-homeassistant`
+5. Select category: **Integration**
+6. Click **Add**
+7. Search for **Intervals.icu** in HACS > Integrations
+8. Click **Download**
+9. **Restart Home Assistant**
 
 ### Manual
+1. Copy the `intervals_icu` folder to your `config/custom_components/` directory
+2. **Restart Home Assistant**
 
-1.  Copy the `intervals_icu` folder to your `config/custom_components/` directory
-2.  Restart Home Assistant
+---
 
 ## Configuration
 
-1.  Go to **Settings > Devices & Services** in Home Assistant.
-2.  Click **Add Integration** and search for **Intervals.icu**.
-3.  Enter your Intervals.icu API Key and Athlete ID.
-4.  Complete the setup.
+1. Go to **Settings > Devices & Services** in Home Assistant
+2. Click **Add Integration** and search for **Intervals.icu**
+3. Enter your Intervals.icu **Athlete ID** and **API Key** ([get your API key](https://forum.intervals.icu/t/api-access-to-intervals-icu/609))
+4. Complete the setup
+
+---
 
 ## Entities and Attributes
 
 ### `sensor.intervals_icu_wellness`
+- **State:** `readiness` (your readiness score)
+- **Attributes:** All fields returned by the Intervals.icu wellness API, for example:
 
-| State |
-| :--- |
-| Your current fitness level. |
+| Attribute         | Description                        |
+|-------------------|------------------------------------|
+| weight            | Your weight                        |
+| restingHR         | Resting heart rate                 |
+| hrv               | Heart rate variability             |
+| hrvSDNN           | HRV SDNN                           |
+| readiness         | Readiness score                    |
+| menstrualPhase    | Menstrual phase                    |
+| systolic          | Systolic blood pressure            |
+| diastolic         | Diastolic blood pressure           |
+| bodyFat           | Body fat percentage                |
+| water             | Body water percentage              |
+| muscleMass        | Muscle mass                        |
+| boneMass          | Bone mass                          |
+| energy            | Energy level                       |
+| hydration         | Hydration level                    |
+| mood              | Mood                               |
+| soreness          | Soreness level                     |
+| stress            | Stress level                       |
+| sleepSecs         | Sleep duration (seconds)           |
+| spO2              | SpO2 level                         |
+| respirationRate   | Respiration rate                   |
+| bloodGlucose      | Blood glucose level                |
+| lactate           | Lactate level                      |
+| bloodPressure     | Blood pressure                     |
+| comment           | Any comments                       |
 
-| Attribute | Description |
-| :--- | :--- |
-| `weight` | Your weight. |
-| `restingHR` | Your resting heart rate. |
-| `hrv` | Your heart rate variability. |
-| `hrvSDNN` | Your HRV SDNN. |
-| `readiness` | Your readiness score. |
-| `menstrualPhase` | Your menstrual phase. |
-| `systolic` | Your systolic blood pressure. |
-| `diastolic` | Your diastolic blood pressure. |
-| `bodyFat` | Your body fat percentage. |
-| `water` | Your body water percentage. |
-| `muscleMass` | Your muscle mass. |
-| `boneMass` | Your bone mass. |
-| `energy` | Your energy level. |
-| `hydration` | Your hydration level. |
-| `mood` | Your mood. |
-| `soreness` | Your soreness level. |
-| `stress` | Your stress level. |
-| `sleepSecs` | Your sleep duration in seconds. |
-| `spO2` | Your SpO2 level. |
-| `respirationRate` | Your respiration rate. |
-| `bloodGlucose` | Your blood glucose level. |
-| `lactate` | Your lactate level. |
-| `bloodPressure` | Your blood pressure. |
-| `comment` | Any comments on your wellness. |
+*Note: The actual attributes depend on your data in Intervals.icu.*
+
+### `sensor.intervals_icu_events`
+- **State:** Number of events (length of the events list)
+- **Attributes:**
+  - `events`: List of all event objects returned by the API
 
 ### `sensor.intervals_icu_recent_activity`
+- **State:** Name of your most recent activity
+- **Attributes:** All fields returned by the Intervals.icu activities API for the most recent activity, for example:
 
-| State |
-| :--- |
-| The name of your most recent activity. |
+| Attribute           | Description                        |
+|---------------------|------------------------------------|
+| id                  | Activity ID                        |
+| name                | Activity name                      |
+| type                | Activity type                      |
+| description         | Description                        |
+| start_date          | Start date/time                    |
+| elapsed_time        | Elapsed time (seconds)             |
+| distance            | Distance (meters)                  |
+| moving_time         | Moving time (seconds)              |
+| average_speed       | Average speed                      |
+| max_speed           | Max speed                          |
+| total_elevation_gain| Total elevation gain               |
+| calories            | Calories burned                    |
+| ...                 | ... (all other fields from API)    |
 
-| Attribute | Description |
-| :--- | :--- |
-| `id` | The activity ID. |
-| `start_date_local` | The start date and time of the activity. |
-| `icu_training_load` | The training load of the activity. |
-| `icu_atl` | Your ATL after the activity. |
-| `icu_ctl` | Your CTL after the activity. |
-| `calendar_id` | The ID of the calendar the activity belongs to. |
-| `uid` | The unique ID of the activity. |
-| `category` | The category of the activity. |
-| `end_date_local` | The end date and time of the activity. |
-| `description` | The description of the activity. |
-| `type` | The type of the activity. |
-| `color` | The color of the activity in the calendar. |
-| `moving_time` | The moving time of the activity in seconds. |
-| `icu_ftp` | Your FTP at the time of the activity. |
-| `atl_days` | The number of days used to calculate ATL. |
-| `ctl_days` | The number of days used to calculate CTL. |
-| `updated` | The last time the activity was updated. |
+*Note: The actual attributes depend on your data in Intervals.icu.*
+
+---
 
 ## Example Dashboard YAML
 
-> This example uses the Mushroom Cards custom component for a beautiful, modern UI.
+> This example uses [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) for a modern UI. You can use any card you like.
 
 ```yaml
 type: vertical-stack
@@ -111,7 +122,7 @@ cards:
     chips:
       - type: entity
         entity: sensor.intervals_icu_wellness
-        name: Fitness
+        name: Readiness
       - type: entity
         entity: sensor.intervals_icu_wellness
         name: Resting HR
@@ -125,24 +136,47 @@ cards:
         use_attribute_as_state: true
         attribute: weight
   - type: custom:mushroom-entity-card
+    entity: sensor.intervals_icu_events
+    name: Events
+    icon: mdi:calendar
+    primary_info: state
+    secondary_info: attribute
+    attribute: events
+  - type: custom:mushroom-entity-card
     entity: sensor.intervals_icu_recent_activity
     name: Recent Activity
     icon: mdi:run
     primary_info: state
     secondary_info: attribute
-    attribute: start_date_local
+    attribute: start_date
 ```
+
+---
 
 ## Troubleshooting
 
-*   Enable debug logging in `configuration.yaml`:
-    ```yaml
-    logger:
-      default: warning
-      logs:
-        custom_components.intervals_icu: debug
-    ```
+- Enable debug logging in `configuration.yaml`:
+  ```yaml
+  logger:
+    default: warning
+    logs:
+      custom_components.intervals_icu: debug
+  ```
+- Check your API key and athlete ID are correct
+- See [Intervals.icu API docs](https://intervals.icu/api-docs.html) for more info
+
+---
+
+## HACS & Home Assistant Compliance
+- [x] `manifest.json` with all required fields
+- [x] `info.md` (optional, but recommended)
+- [x] Clear install/config instructions
+- [x] Entity and attribute documentation
+- [x] Example dashboard YAML
+- [x] Troubleshooting section
+- [x] MIT License
+
+---
 
 ## License
-
 MIT

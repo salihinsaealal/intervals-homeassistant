@@ -17,6 +17,7 @@ from .const import (
     CONF_API_KEY,
     ENDPOINT_WELLNESS,
     ENDPOINT_EVENTS,
+    ENDPOINT_ACTIVITIES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,13 +52,18 @@ class IntervalsDataUpdateCoordinator(DataUpdateCoordinator):
             tasks = [
                 self._make_api_request(ENDPOINT_WELLNESS),
                 self._make_api_request(ENDPOINT_EVENTS),
+                self._make_api_request(ENDPOINT_ACTIVITIES),
             ]
 
-            wellness_data, events_data = await asyncio.gather(*tasks)
+            wellness_data, events_data, activities_data = await asyncio.gather(*tasks)
+
+            # Get the most recent activity (assuming activities are sorted by date desc)
+            recent_activity = activities_data[0] if activities_data and isinstance(activities_data, list) else None
 
             return {
                 "wellness": wellness_data,
                 "events": events_data,
+                "recent_activity": recent_activity,
             }
 
         except Exception as err:

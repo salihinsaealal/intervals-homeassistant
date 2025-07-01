@@ -17,6 +17,9 @@ from .const import (
 )
 from .coordinator import IntervalsDataUpdateCoordinator
 
+# Add a constant for the recent activity sensor
+SENSOR_RECENT_ACTIVITY = "recent_activity"
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -30,6 +33,7 @@ async def async_setup_entry(
         [
             IntervalsIcuWellnessSensor(coordinator),
             IntervalsIcuEventsSensor(coordinator),
+            IntervalsIcuRecentActivitySensor(coordinator),
         ]
     )
 
@@ -98,3 +102,25 @@ class IntervalsIcuEventsSensor(IntervalsIcuSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return entity specific state attributes."""
         return {"events": self.coordinator.data.get("events", [])}
+
+
+class IntervalsIcuRecentActivitySensor(IntervalsIcuSensor):
+    """Representation of Intervals.icu Recent Activity sensor."""
+
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, SENSOR_RECENT_ACTIVITY)
+        athlete_id = self.coordinator.athlete_id
+        self._attr_name = f"Intervals.icu Recent Activity {athlete_id}"
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_RECENT_ACTIVITY}"
+
+    @property
+    def state(self) -> StateType:
+        """Return the state of the sensor (activity name)."""
+        data = self.coordinator.data.get("recent_activity", {})
+        return data.get("name") if data else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return all fields of the recent activity as attributes."""
+        return self.coordinator.data.get("recent_activity", {}) or {}
