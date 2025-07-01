@@ -72,9 +72,17 @@ class IntervalsIcuWellnessSensor(IntervalsIcuSensor):
 
     @property
     def state(self) -> StateType:
-        """Return the state of the sensor."""
+        """Return the state of the sensor as (ctl-atl)/ctl*100%."""
         data = self.coordinator.data.get("wellness", {})
-        return data.get("readiness")
+        ctl = data.get("ctl")
+        atl = data.get("atl")
+        if ctl is not None and atl is not None and ctl != 0:
+            try:
+                value = (ctl - atl) / ctl * 100
+                return round(value, 1)
+            except Exception:
+                return None
+        return None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

@@ -13,7 +13,7 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 ## Features
 
 - Secure Basic Auth with your Intervals.icu API Key
-- **Wellness Sensor**: All your latest wellness metrics
+- **Wellness Sensor**: Displays `(CTL - ATL) / CTL * 100%` (rounded to 1 decimal place), where CTL is Chronic Training Load and ATL is Acute Training Load. This value is a custom readiness-like metric, not the original Intervals.icu readiness value.
 - **Events Sensor**: See your upcoming or past events
 - Data updates every 15 minutes
 - Easy setup via Home Assistant UI
@@ -52,7 +52,7 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 ## Entities and Attributes
 
 ### `sensor.intervals_icu_wellness`
-- **State:** `readiness` (your readiness score)
+- **State:** `(CTL - ATL) / CTL * 100%` (rounded to 1 decimal place)
 - **Attributes:** All fields returned by the Intervals.icu wellness API, for example:
 
 | Attribute         | Description                        |
