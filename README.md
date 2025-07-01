@@ -7,7 +7,8 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 ## Features
 
 *   Basic authentication with your Intervals.icu API Key.
-*   A sensor for your wellness data.
+*   Sensors for your wellness data.
+*   A sensor for your most recent activity.
 *   Data updates every 15 minutes.
 
 ## Installation
@@ -38,11 +39,40 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 
 ## Entities and Attributes
 
-### `sensor.intervals_icu_wellness_[athlete_id]`
+### Wellness Sensors
 
-**State:** `Data available` or `No data`
+This integration creates individual sensors for each of the following wellness data points:
 
-**Attributes:** All the wellness data from the Intervals.icu API.
+*   Weight
+*   Resting HR
+*   HRV
+*   HRV SDNN
+*   Readiness
+*   Menstrual Phase
+*   Systolic
+*   Diastolic
+*   Body Fat
+*   Water
+*   Muscle Mass
+*   Bone Mass
+*   Energy
+*   Hydration
+*   Mood
+*   Soreness
+*   Stress
+*   Sleep
+*   SpO2
+*   Respiration Rate
+*   Blood Glucose
+*   Lactate
+*   Blood Pressure
+*   Comment
+
+### `sensor.intervals_icu_recent_activity`
+
+**State:** The name of your most recent activity.
+
+**Attributes:** All the data for your most recent activity from the Intervals.icu API, with nested data flattened.
 
 ## Troubleshooting
 

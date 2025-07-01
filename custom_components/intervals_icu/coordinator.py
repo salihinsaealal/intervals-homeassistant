@@ -44,8 +44,16 @@ class IntervalsIcuCoordinator(DataUpdateCoordinator):
                 wellness_response.raise_for_status()
                 wellness_data = await wellness_response.json()
 
+                events_response = await self.session.get(
+                    f"https://intervals.icu/api/v1/athlete/{self.athlete_id}/events",
+                    auth=self.auth,
+                )
+                events_response.raise_for_status()
+                events_data = await events_response.json()
+
                 return {
                     "wellness": wellness_data,
+                    "events": events_data,
                 }
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
