@@ -10,3 +10,6 @@ ENDPOINT_ACTIVITIES = "activities"
 CONF_ATHLETE_ID = "athlete_id"
 CONF_API_KEY = "api_key"
 UPDATE_INTERVAL = timedelta(minutes=15)
+SENSOR_WELLNESS = "wellness"
+SENSOR_EVENTS = "events"
+SENSOR_RECENT_ACTIVITY = "recent_activity"
