@@ -1,0 +1,11 @@
+{
+  "domain": "intervals_icu",
+  "name": "Intervals.icu",
+  "config_flow": true,
+  "documentation": "https://github.com/salihinsaealal/intervals-icu-homeassistant",
+  "issue_tracker": "https://github.com/salihinsaealal/intervals-icu-homeassistant/issues",
+  "codeowners": ["@salihinsaealal"],
+  "version": "1.0.0",
+  "iot_class": "cloud_polling",
+  "requirements": []
+}
