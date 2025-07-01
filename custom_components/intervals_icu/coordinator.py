@@ -2,58 +2,75 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import timedelta
 import logging
+from datetime import timedelta
+from typing import Any
 
 import aiohttp
-
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN
+from .const import (
+    DOMAIN,
+    API_BASE_URL,
+    CONF_ATHLETE_ID,
+    CONF_API_KEY,
+    ENDPOINT_WELLNESS,
+    ENDPOINT_EVENTS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class IntervalsIcuCoordinator(DataUpdateCoordinator):
-    """Data update coordinator for the Intervals.icu integration."""
+class IntervalsDataUpdateCoordinator(DataUpdateCoordinator):
+    """Class to manage fetching data from the Intervals.icu API."""
 
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
-        """Initialize the coordinator."""
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        session: aiohttp.ClientSession,
+        config_data: dict[str, Any],
+        update_interval: timedelta,
+    ) -> None:
+        """Initialize."""
+        self.session = session
+        self.athlete_id = config_data[CONF_ATHLETE_ID]
+        self.api_key = config_data[CONF_API_KEY]
+        self.auth = aiohttp.BasicAuth("API_KEY", self.api_key)
+
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=15),
+            update_interval=update_interval,
         )
-        self.session = async_get_clientsession(hass)
-        self.api_key = entry.data["api_key"]
-        self.athlete_id = entry.data["athlete_id"]
-        self.auth = aiohttp.BasicAuth("API_KEY", password=self.api_key)
 
-    async def _async_update_data(self) -> dict:
-        """Fetch data from the API."""
+    async def _async_update_data(self) -> dict[str, Any]:
+        """Fetch data from API endpoints."""
         try:
-            async with asyncio.timeout(10):
-                wellness_response = await self.session.get(
-                    f"https://intervals.icu/api/v1/athlete/{self.athlete_id}/wellness",
-                    auth=self.auth,
-                )
-                wellness_response.raise_for_status()
-                wellness_data = await wellness_response.json()
+            tasks = [
+                self._make_api_request(ENDPOINT_WELLNESS),
+                self._make_api_request(ENDPOINT_EVENTS),
+            ]
 
-                events_response = await self.session.get(
-                    f"https://intervals.icu/api/v1/athlete/{self.athlete_id}/events",
-                    auth=self.auth,
-                )
-                events_response.raise_for_status()
-                events_data = await events_response.json()
+            wellness_data, events_data = await asyncio.gather(*tasks)
 
-                return {
-                    "wellness": wellness_data,
-                    "events": events_data,
-                }
+            return {
+                "wellness": wellness_data,
+                "events": events_data,
+            }
+
+        except Exception as err:
+            raise UpdateFailed(f"Error communicating with Intervals.icu API: {err}") from err
+
+    async def _make_api_request(self, endpoint: str) -> dict:
+        """Make an authenticated API request."""
+        url = f"{API_BASE_URL}/athlete/{self.athlete_id}/{endpoint}"
+
+        try:
+            async with self.session.get(url, auth=self.auth) as response:
+                response.raise_for_status()
+                return await response.json()
+
         except aiohttp.ClientError as err:
-            raise UpdateFailed(f"Error communicating with API: {err}") from err
+            raise UpdateFailed(f"API request failed: {err}") from err

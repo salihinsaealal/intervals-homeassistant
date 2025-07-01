@@ -1,95 +1,100 @@
 """Sensor platform for the Intervals.icu integration."""
 from __future__ import annotations
 
+from typing import Any
+
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.typing import StateType
 
-from .const import DOMAIN
-from .coordinator import IntervalsIcuCoordinator
+from .const import (
+    DOMAIN,
+    SENSOR_WELLNESS,
+    SENSOR_EVENTS,
+    CONF_ATHLETE_ID,
+)
+from .coordinator import IntervalsDataUpdateCoordinator
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the sensor platform."""
-    coordinator = IntervalsIcuCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
+    """Set up Intervals.icu sensor based on a config entry."""
+    coordinator: IntervalsDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    sensors = [
-        WellnessSensor(coordinator, entry),
-        RecentActivitySensor(coordinator, entry),
-    ]
+    async_add_entities(
+        [
+            IntervalsIcuWellnessSensor(coordinator),
+            IntervalsIcuEventsSensor(coordinator),
+        ]
+    )
 
-    async_add_entities(sensors)
 
+class IntervalsIcuSensor(SensorEntity):
+    """Base class for Intervals.icu sensors."""
 
-class WellnessSensor(CoordinatorEntity[IntervalsIcuCoordinator], SensorEntity):
-    """A sensor for wellness data from Intervals.icu."""
-
-    def __init__(
-        self,
-        coordinator: IntervalsIcuCoordinator,
-        entry: ConfigEntry,
-    ) -> None:
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator, sensor_type: str) -> None:
         """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._attr_name = f"Intervals.icu Wellness"
-        self._attr_unique_id = f"{entry.entry_id}_wellness"
+        self.coordinator = coordinator
+        self._sensor_type = sensor_type
+        self._attr_has_entity_name = True
 
     @property
-    def native_value(self) -> str | int | float | None:
-        """Return the state of the sensor."""
-        if self.coordinator.data and "wellness" in self.coordinator.data:
-            return self.coordinator.data["wellness"].get("fitness")
-        return None
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self.coordinator.last_update_success
 
-    @property
-    def extra_state_attributes(self) -> dict[str, str] | None:
-        """Return the state attributes."""
-        if self.coordinator.data and "wellness" in self.coordinator.data:
-            attributes = self.coordinator.data["wellness"].copy()
-            attributes.pop("fitness", None)
-            return attributes
-        return None
+    async def async_added_to_hass(self) -> None:
+        """When entity is added to hass."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self.async_write_ha_state)
+        )
 
 
-class RecentActivitySensor(CoordinatorEntity[IntervalsIcuCoordinator], SensorEntity):
-    """A sensor for the most recent activity from Intervals.icu."""
+class IntervalsIcuWellnessSensor(IntervalsIcuSensor):
+    """Representation of Intervals.icu Wellness sensor."""
 
-    def __init__(
-        self, coordinator: IntervalsIcuCoordinator, entry: ConfigEntry
-    ) -> None:
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator) -> None:
         """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._attr_name = f"Intervals.icu Recent Activity"
-        self._attr_unique_id = f"{entry.entry_id}_recent_activity"
+        super().__init__(coordinator, SENSOR_WELLNESS)
+        athlete_id = self.coordinator.athlete_id
+        self._attr_name = f"Intervals.icu Wellness {athlete_id}"
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_WELLNESS}"
 
     @property
-    def native_value(self) -> str | None:
+    def state(self) -> StateType:
         """Return the state of the sensor."""
-        if self.coordinator.data and "events" in self.coordinator.data:
-            if events := self.coordinator.data["events"]:
-                return events[-1].get("name")
-        return None
+        data = self.coordinator.data.get("wellness", {})
+        return data.get("readiness")
 
     @property
-    def extra_state_attributes(self) -> dict[str, str] | None:
-        """Return the state attributes."""
-        if self.coordinator.data and "events" in self.coordinator.data:
-            if events := self.coordinator.data["events"]:
-                # Flatten the attributes
-                attributes = {}
-                for key, value in events[-1].items():
-                    if isinstance(value, dict):
-                        for sub_key, sub_value in value.items():
-                            attributes[f"{key}_{sub_key}"] = sub_value
-                    else:
-                        attributes[key] = value
-                attributes.pop("name", None)
-                return attributes
-        return None
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return entity specific state attributes."""
+        return self.coordinator.data.get("wellness", {})
+
+
+class IntervalsIcuEventsSensor(IntervalsIcuSensor):
+    """Representation of Intervals.icu Events sensor."""
+
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, SENSOR_EVENTS)
+        athlete_id = self.coordinator.athlete_id
+        self._attr_name = f"Intervals.icu Events {athlete_id}"
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_EVENTS}"
+
+    @property
+    def state(self) -> StateType:
+        """Return the state of the sensor."""
+        data = self.coordinator.data.get("events", [])
+        return len(data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return entity specific state attributes."""
+        return {"events": self.coordinator.data.get("events", [])}
