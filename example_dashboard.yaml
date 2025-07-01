@@ -1,0 +1,160 @@
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: separator
+    name: 🚴‍♂️ Intervals.icu Dashboard
+    icon: mdi:bike
+    styles: |
+      .bubble-line {
+        background: var(--primary-color);
+        opacity: 0.2;
+      }
+      .bubble-icon {
+        color: var(--primary-color);
+      }
+  - type: horizontal-stack
+    cards:
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_wellness
+        name: CTL
+        icon: mdi:chart-line
+        show_name: true
+        show_icon: true
+        show_state: false
+        show_attribute: true
+        attribute: ctl
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--blue-color);
+          }
+          .bubble-icon {
+            color: var(--blue-color);
+          }
+        button_type: name
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_wellness
+        name: ATL
+        icon: mdi:chart-bell-curve
+        show_name: true
+        show_icon: true
+        show_state: false
+        show_attribute: true
+        attribute: atl
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--green-color);
+          }
+          .bubble-icon {
+            color: var(--green-color);
+          }
+        button_type: name
+  - type: horizontal-stack
+    cards:
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_wellness
+        name: Resting HR
+        icon: mdi:heart-pulse
+        show_name: true
+        show_icon: true
+        show_state: false
+        show_attribute: true
+        attribute: restingHR
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--red-color);
+          }
+          .bubble-icon {
+            color: var(--red-color);
+          }
+        button_type: name
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_wellness
+        name: HRV
+        icon: mdi:heart
+        show_name: true
+        show_icon: true
+        show_state: false
+        show_attribute: true
+        attribute: hrv
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--purple-color);
+          }
+          .bubble-icon {
+            color: var(--purple-color);
+          }
+        button_type: name
+  - type: horizontal-stack
+    cards:
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_recent_activity
+        name: Last Activity
+        icon: mdi:run
+        show_name: true
+        show_icon: true
+        show_state: true
+        show_attribute: true
+        attribute: name
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--primary-color);
+          }
+          .bubble-icon {
+            color: var(--primary-color);
+          }
+        button_type: name
+      - type: custom:bubble-card
+        card_type: button
+        entity: sensor.intervals_icu_recent_activity
+        name: Distance
+        icon: mdi:map-marker-distance
+        show_name: true
+        show_icon: true
+        show_state: false
+        show_attribute: true
+        attribute: distance
+        tap_action:
+          action: more-info
+        styles: |
+          .bubble-button-card-container {
+            background: var(--ha-card-background, var(--card-background-color));
+            border: 1px solid var(--primary-color);
+          }
+          .bubble-icon {
+            color: var(--primary-color);
+          }
+        button_type: name
+  - type: markdown
+    content: >
+      ### 🏆 Intervals.icu Summary
+
+      **CTL:** {{ state_attr('sensor.intervals_icu_wellness', 'ctl') }} |
+      **ATL:** {{ state_attr('sensor.intervals_icu_wellness', 'atl') }} |
+      **Resting HR:** {{ state_attr('sensor.intervals_icu_wellness', 'restingHR') }} |
+      **HRV:** {{ state_attr('sensor.intervals_icu_wellness', 'hrv') }}
+
+      **Last Activity:** {{ state_attr('sensor.intervals_icu_recent_activity', 'name') }} |
+      **Distance:** {{ state_attr('sensor.intervals_icu_recent_activity', 'distance') }} m |
+      **Calories:** {{ state_attr('sensor.intervals_icu_recent_activity', 'calories') }}
+
+      **Date:** {{ state_attr('sensor.intervals_icu_recent_activity', 'start_date_local') }} 

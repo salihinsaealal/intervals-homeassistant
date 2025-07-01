@@ -113,47 +113,12 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 
 ---
 
-## Example Dashboard YAML
+## Example Dashboard
 
-> This example uses [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) for a modern UI. You can use any card you like.
+> See [`example_dashboard.yaml`](./example_dashboard.yaml) for a ready-to-use Bubble Card dashboard example for Intervals.icu!
 
-```yaml
-type: vertical-stack
-cards:
-  - type: custom:mushroom-title-card
-    title: Intervals.icu
-  - type: custom:mushroom-chips-card
-    chips:
-      - type: entity
-        entity: sensor.intervals_icu_wellness
-        name: Readiness
-      - type: entity
-        entity: sensor.intervals_icu_wellness
-        name: Resting HR
-        icon: mdi:heart-pulse
-        use_attribute_as_state: true
-        attribute: restingHR
-      - type: entity
-        entity: sensor.intervals_icu_wellness
-        name: Weight
-        icon: mdi:weight-kilogram
-        use_attribute_as_state: true
-        attribute: weight
-  - type: custom:mushroom-entity-card
-    entity: sensor.intervals_icu_events
-    name: Events
-    icon: mdi:calendar
-    primary_info: state
-    secondary_info: attribute
-    attribute: events
-  - type: custom:mushroom-entity-card
-    entity: sensor.intervals_icu_recent_activity
-    name: Recent Activity
-    icon: mdi:run
-    primary_info: state
-    secondary_info: attribute
-    attribute: start_date
-```
+This example uses [Bubble Card](https://github.com/Devqon/bubble-card) for a beautiful, modern UI.  
+You can import or copy the YAML from the file directly into your Home Assistant dashboard.
 
 ---
 
