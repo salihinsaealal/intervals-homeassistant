@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any
 
 import aiohttp
@@ -49,15 +49,16 @@ class IntervalsDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from API endpoints."""
         try:
+            today = datetime.now().strftime('%Y-%m-%d')
             tasks = [
-                self._make_api_request(ENDPOINT_WELLNESS),
+                self._make_api_request(f"wellness/{today}"),
                 self._make_api_request(ENDPOINT_EVENTS),
-                self._make_api_request(ENDPOINT_ACTIVITIES),
+                self._make_api_request(f"{ENDPOINT_ACTIVITIES}?limit=1"),
             ]
 
             wellness_data, events_data, activities_data = await asyncio.gather(*tasks)
 
-            # Get the most recent activity (assuming activities are sorted by date desc)
+            # Get the most recent activity (should be the only one returned)
             recent_activity = activities_data[0] if activities_data and isinstance(activities_data, list) else None
 
             return {
