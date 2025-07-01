@@ -4,6 +4,6 @@
   "domains": ["sensor"],
   "homeassistant": "2023.8.0",
   "iot_class": "Cloud Polling",
-  "logo": "logo.png",
-  "icon": "icon.png"
+  "logo": "assets/logo.png",
+  "icon": "assets/icon.png"
 }

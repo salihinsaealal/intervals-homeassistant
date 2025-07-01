@@ -1,4 +1,4 @@
-# <img src="custom_components/intervals_icu/logo.png" alt="Intervals.icu Logo" width="120" style="vertical-align:middle; margin-right: 10px;"/> Intervals.icu Home Assistant Integration
+# ![Intervals.icu Logo](assets/logo.png)
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Open in HACS](https://img.shields.io/badge/-Add%20with%20HACS-41BDF5?logo=home-assistant&logoColor=white&style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=salihinsaealal&repository=intervals-homeassistant&category=integration)
