@@ -1,5 +1,3 @@
-# ![logo@0.5x](assets/logo.png)
-
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Open in HACS](https://img.shields.io/badge/-Add%20with%20HACS-41BDF5?logo=home-assistant&logoColor=white&style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=salihinsaealal&repository=intervals-homeassistant&category=integration)
 [![Open in Home Assistant](https://img.shields.io/badge/-Open%20in%20Home%20Assistant-41BDF5?logo=home-assistant&logoColor=white&style=flat-square)](https://my.home-assistant.io/redirect/integration/?domain=intervals_icu)
@@ -53,36 +51,13 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 
 ### `sensor.intervals_icu_wellness`
 - **State:** `(CTL - ATL) / CTL * 100%` (rounded to 1 decimal place)
-- **Attributes:** All fields returned by the Intervals.icu wellness API, for example:
+- **Attributes:**
+  - `ctl`, `atl`, `form`, `fatigue`, `fitness`, `readiness`
 
-| Attribute         | Description                        |
-|-------------------|------------------------------------|
-| weight            | Your weight                        |
-| restingHR         | Resting heart rate                 |
-| hrv               | Heart rate variability             |
-| hrvSDNN           | HRV SDNN                           |
-| readiness         | Readiness score                    |
-| menstrualPhase    | Menstrual phase                    |
-| systolic          | Systolic blood pressure            |
-| diastolic         | Diastolic blood pressure           |
-| bodyFat           | Body fat percentage                |
-| water             | Body water percentage              |
-| muscleMass        | Muscle mass                        |
-| boneMass          | Bone mass                          |
-| energy            | Energy level                       |
-| hydration         | Hydration level                    |
-| mood              | Mood                               |
-| soreness          | Soreness level                     |
-| stress            | Stress level                       |
-| sleepSecs         | Sleep duration (seconds)           |
-| spO2              | SpO2 level                         |
-| respirationRate   | Respiration rate                   |
-| bloodGlucose      | Blood glucose level                |
-| lactate           | Lactate level                      |
-| bloodPressure     | Blood pressure                     |
-| comment           | Any comments                       |
-
-*Note: The actual attributes depend on your data in Intervals.icu.*
+### `sensor.intervals_icu_wellness_details`
+- **State:** `OK` if data is present
+- **Attributes:**
+  - All fields returned by the Intervals.icu wellness API (full data dump)
 
 ### `sensor.intervals_icu_events`
 - **State:** Number of events (length of the events list)
@@ -91,23 +66,13 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 
 ### `sensor.intervals_icu_recent_activity`
 - **State:** Name of your most recent activity
-- **Attributes:** All fields returned by the Intervals.icu activities API for the most recent activity, for example:
+- **Attributes:**
+  - `name`, `date`, `type`, `duration`, `distance`, `work`, `intensity`
 
-| Attribute           | Description                        |
-|---------------------|------------------------------------|
-| id                  | Activity ID                        |
-| name                | Activity name                      |
-| type                | Activity type                      |
-| description         | Description                        |
-| start_date          | Start date/time                    |
-| elapsed_time        | Elapsed time (seconds)             |
-| distance            | Distance (meters)                  |
-| moving_time         | Moving time (seconds)              |
-| average_speed       | Average speed                      |
-| max_speed           | Max speed                          |
-| total_elevation_gain| Total elevation gain               |
-| calories            | Calories burned                    |
-| ...                 | ... (all other fields from API)    |
+### `sensor.intervals_icu_recent_activity_details`
+- **State:** `OK` if data is present
+- **Attributes:**
+  - All fields returned by the Intervals.icu activities API for the most recent activity (full data dump)
 
 *Note: The actual attributes depend on your data in Intervals.icu.*
 
@@ -116,6 +81,8 @@ Integrate your [Intervals.icu](https://intervals.icu/) fitness and training data
 ## Example Dashboard
 
 > See [`example_dashboard.yaml`](./example_dashboard.yaml) for a ready-to-use Bubble Card dashboard example for Intervals.icu!
+>
+> **Tip:** For advanced automations or dashboards, use the `_details` sensors to access all available data fields.
 
 This example uses [Bubble Card](https://github.com/Devqon/bubble-card) for a beautiful, modern UI.  
 You can import or copy the YAML from the file directly into your Home Assistant dashboard.

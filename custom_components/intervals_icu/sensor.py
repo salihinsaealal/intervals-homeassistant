@@ -32,8 +32,10 @@ async def async_setup_entry(
     async_add_entities(
         [
             IntervalsIcuWellnessSensor(coordinator),
+            IntervalsIcuWellnessDetailsSensor(coordinator),
             IntervalsIcuEventsSensor(coordinator),
             IntervalsIcuRecentActivitySensor(coordinator),
+            IntervalsIcuRecentActivityDetailsSensor(coordinator),
         ]
     )
 
@@ -69,6 +71,8 @@ class IntervalsIcuWellnessSensor(IntervalsIcuSensor):
         athlete_id = self.coordinator.athlete_id
         self._attr_name = f"Intervals.icu Wellness {athlete_id}"
         self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_WELLNESS}"
+        self._attr_state_class = "measurement"
+        self._attr_device_class = None
 
     @property
     def state(self) -> StateType:
@@ -86,7 +90,34 @@ class IntervalsIcuWellnessSensor(IntervalsIcuSensor):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return entity specific state attributes."""
+        data = self.coordinator.data.get("wellness", {})
+        # Only expose key metrics
+        return {
+            "ctl": data.get("ctl"),
+            "atl": data.get("atl"),
+            "form": data.get("form"),
+            "fatigue": data.get("fatigue"),
+            "fitness": data.get("fitness"),
+            "readiness": data.get("readiness"),
+        }
+
+
+class IntervalsIcuWellnessDetailsSensor(IntervalsIcuSensor):
+    """Details sensor for Intervals.icu Wellness (all attributes)."""
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator) -> None:
+        super().__init__(coordinator, f"{SENSOR_WELLNESS}_details")
+        athlete_id = self.coordinator.athlete_id
+        self._attr_name = f"Intervals.icu Wellness Details {athlete_id}"
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_WELLNESS}_details"
+        self._attr_state_class = None
+        self._attr_device_class = None
+
+    @property
+    def state(self) -> StateType:
+        return "OK" if self.coordinator.data.get("wellness") else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
         return self.coordinator.data.get("wellness", {})
 
 
@@ -130,5 +161,33 @@ class IntervalsIcuRecentActivitySensor(IntervalsIcuSensor):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return all fields of the recent activity as attributes."""
+        data = self.coordinator.data.get("recent_activity", {})
+        # Only expose key activity details
+        return {
+            "name": data.get("name"),
+            "date": data.get("date"),
+            "type": data.get("type"),
+            "duration": data.get("duration"),
+            "distance": data.get("distance"),
+            "work": data.get("work"),
+            "intensity": data.get("intensity"),
+        }
+
+
+class IntervalsIcuRecentActivityDetailsSensor(IntervalsIcuSensor):
+    """Details sensor for Intervals.icu Recent Activity (all attributes)."""
+    def __init__(self, coordinator: IntervalsDataUpdateCoordinator) -> None:
+        super().__init__(coordinator, f"{SENSOR_RECENT_ACTIVITY}_details")
+        athlete_id = self.coordinator.athlete_id
+        self._attr_name = f"Intervals.icu Recent Activity Details {athlete_id}"
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{SENSOR_RECENT_ACTIVITY}_details"
+        self._attr_state_class = None
+        self._attr_device_class = None
+
+    @property
+    def state(self) -> StateType:
+        return "OK" if self.coordinator.data.get("recent_activity") else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
         return self.coordinator.data.get("recent_activity", {}) or {}

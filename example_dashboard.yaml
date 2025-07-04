@@ -150,11 +150,13 @@ cards:
 
       **CTL:** {{ state_attr('sensor.intervals_icu_wellness', 'ctl') }} |
       **ATL:** {{ state_attr('sensor.intervals_icu_wellness', 'atl') }} |
-      **Resting HR:** {{ state_attr('sensor.intervals_icu_wellness', 'restingHR') }} |
-      **HRV:** {{ state_attr('sensor.intervals_icu_wellness', 'hrv') }}
+      **Resting HR:** {{ state_attr('sensor.intervals_icu_wellness_details', 'restingHR') }} |
+      **HRV:** {{ state_attr('sensor.intervals_icu_wellness_details', 'hrv') }}
 
       **Last Activity:** {{ state_attr('sensor.intervals_icu_recent_activity', 'name') }} |
       **Distance:** {{ state_attr('sensor.intervals_icu_recent_activity', 'distance') }} m |
-      **Calories:** {{ state_attr('sensor.intervals_icu_recent_activity', 'calories') }}
+      **Calories:** {{ state_attr('sensor.intervals_icu_recent_activity_details', 'calories') }}
 
-      **Date:** {{ state_attr('sensor.intervals_icu_recent_activity', 'start_date_local') }} 
+      **Date:** {{ state_attr('sensor.intervals_icu_recent_activity_details', 'start_date_local') }} 
+
+      *Tip: Use the `_details` sensors for advanced attributes, e.g. `sensor.intervals_icu_wellness_details` and `sensor.intervals_icu_recent_activity_details`.* 
